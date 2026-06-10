@@ -760,7 +760,12 @@ export default function InboxPage() {
     try {
       const res = await messages.listByConversation(convId, { limit: 100 });
       const data = res.data?.data || res.data || [];
-      setMsgList(Array.isArray(data) ? data : []);
+      const dbMsgs = Array.isArray(data) ? data : [];
+      setMsgList((prev) => {
+        // Preserve optimistic (temp_) messages not yet confirmed by DB
+        const optimistics = prev.filter((m) => String(m.id).startsWith('temp_'));
+        return [...dbMsgs, ...optimistics];
+      });
     } catch {
       // keep existing messages on error
     } finally {
@@ -813,7 +818,14 @@ export default function InboxPage() {
     try {
       const res = await messages.sendText(selectedConv.id, { body: text });
       const sent = res.data;
-      setMsgList((prev) => prev.map((m) => m.id === tempId ? { ...sent, body: sent.body || text } : m));
+      setMsgList((prev) => {
+        const withoutTemp = prev.filter((m) => m.id !== tempId);
+        const alreadyExists = withoutTemp.some((m) => m.id === sent.id);
+        if (alreadyExists) {
+          return withoutTemp.map((m) => m.id === sent.id ? { ...sent, body: sent.body || text } : m);
+        }
+        return [...withoutTemp, { ...sent, body: sent.body || text }];
+      });
     } catch {
       setMsgList((prev) => prev.map((m) => m.id === tempId ? { ...m, status: 'FAILED' } : m));
     } finally {
