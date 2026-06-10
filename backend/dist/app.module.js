@@ -12,6 +12,7 @@ const config_1 = require("@nestjs/config");
 const throttler_1 = require("@nestjs/throttler");
 const schedule_1 = require("@nestjs/schedule");
 const bull_1 = require("@nestjs/bull");
+const jwt_1 = require("@nestjs/jwt");
 const prisma_module_1 = require("./prisma/prisma.module");
 const auth_module_1 = require("./auth/auth.module");
 const hotels_module_1 = require("./hotels/hotels.module");
@@ -27,8 +28,14 @@ const queue_module_1 = require("./queue/queue.module");
 const analytics_module_1 = require("./analytics/analytics.module");
 const logs_module_1 = require("./logs/logs.module");
 const gateway_module_1 = require("./gateway/gateway.module");
+const super_admin_module_1 = require("./super-admin/super-admin.module");
+const audit_module_1 = require("./audit/audit.module");
+const tenant_middleware_1 = require("./common/middleware/tenant.middleware");
 const health_controller_1 = require("./health.controller");
 let AppModule = class AppModule {
+    configure(consumer) {
+        consumer.apply(tenant_middleware_1.TenantMiddleware).forRoutes('*');
+    }
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
@@ -54,8 +61,19 @@ exports.AppModule = AppModule = __decorate([
                 }),
                 inject: [config_1.ConfigService],
             }),
+            jwt_1.JwtModule.registerAsync({
+                imports: [config_1.ConfigModule],
+                useFactory: (config) => ({
+                    secret: config.get('JWT_SECRET'),
+                    signOptions: { expiresIn: config.get('JWT_EXPIRES_IN') || '7d' },
+                }),
+                inject: [config_1.ConfigService],
+                global: true,
+            }),
             prisma_module_1.PrismaModule,
+            audit_module_1.AuditModule,
             auth_module_1.AuthModule,
+            super_admin_module_1.SuperAdminModule,
             hotels_module_1.HotelsModule,
             guests_module_1.GuestsModule,
             whatsapp_module_1.WhatsAppModule,

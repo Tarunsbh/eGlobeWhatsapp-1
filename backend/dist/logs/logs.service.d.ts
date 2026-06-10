@@ -25,16 +25,16 @@ export declare class LogsService {
     }): Promise<{
         data: {
             id: bigint;
-            hotelId: string | null;
             createdAt: Date;
+            hotelId: string | null;
+            userId: string | null;
+            ip: string | null;
+            userAgent: string | null;
             type: import(".prisma/client").$Enums.LogType;
             message: string;
-            ip: string | null;
             level: import(".prisma/client").$Enums.LogLevel;
-            userId: string | null;
             context: import("@prisma/client/runtime/library").JsonValue | null;
             requestId: string | null;
-            userAgent: string | null;
             durationMs: number | null;
         }[];
         meta: {
@@ -46,16 +46,16 @@ export declare class LogsService {
     }>;
     createLog(hotelId: string, type: string, level: string, message: string, context?: Record<string, any>): Promise<{
         id: bigint;
-        hotelId: string | null;
         createdAt: Date;
+        hotelId: string | null;
+        userId: string | null;
+        ip: string | null;
+        userAgent: string | null;
         type: import(".prisma/client").$Enums.LogType;
         message: string;
-        ip: string | null;
         level: import(".prisma/client").$Enums.LogLevel;
-        userId: string | null;
         context: import("@prisma/client/runtime/library").JsonValue | null;
         requestId: string | null;
-        userAgent: string | null;
         durationMs: number | null;
     }>;
 }

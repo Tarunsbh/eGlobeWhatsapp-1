@@ -140,14 +140,15 @@ let TemplatesService = TemplatesService_1 = class TemplatesService {
     async softDelete(hotelId, id) {
         const template = await this.findOne(hotelId, id);
         if (template.metaTemplateId) {
-            try {
-                const hotel = await this.prisma.hotel.findUnique({ where: { id: hotelId } });
-                if (hotel?.wabaId && hotel.wabaId !== 'CONFIGURE_IN_SETTINGS') {
+            const hotel = await this.prisma.hotel.findUnique({ where: { id: hotelId } });
+            if (hotel?.wabaId && hotel.wabaId !== 'CONFIGURE_IN_SETTINGS') {
+                try {
                     await this.whatsappService.deleteTemplateOnMeta(hotelId, hotel.wabaId, template.name);
                 }
-            }
-            catch (e) {
-                this.logger.warn(`Meta template deletion failed for ${template.name}: ${e?.message}`);
+                catch (e) {
+                    const msg = this.getMetaErrorMessage(e);
+                    throw new common_1.BadRequestException(`Failed to delete template from Meta: ${msg}`);
+                }
             }
         }
         return this.prisma.template.update({
@@ -167,7 +168,14 @@ let TemplatesService = TemplatesService_1 = class TemplatesService {
         if (!resolvedWabaId || resolvedWabaId === 'CONFIGURE_IN_SETTINGS') {
             throw new common_1.BadRequestException('WABA ID is not configured. Go to Settings → WhatsApp and save your WABA ID.');
         }
-        const metaTemplates = await this.whatsappService.fetchTemplatesFromMeta(hotelId, resolvedWabaId);
+        let metaTemplates;
+        try {
+            metaTemplates = await this.whatsappService.fetchTemplatesFromMeta(hotelId, resolvedWabaId);
+        }
+        catch (e) {
+            const msg = this.getMetaErrorMessage(e);
+            throw new common_1.BadRequestException(`Meta API error: ${msg}`);
+        }
         let synced = 0;
         let errors = 0;
         const errorMessages = [];

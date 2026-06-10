@@ -162,15 +162,16 @@ export class TemplatesService {
   async softDelete(hotelId: string, id: string) {
     const template = await this.findOne(hotelId, id);
 
-    // Best-effort Meta deletion — don't block local delete if Meta call fails
+    // If the template was submitted to Meta, delete it there first
     if (template.metaTemplateId) {
-      try {
-        const hotel = await this.prisma.hotel.findUnique({ where: { id: hotelId } });
-        if (hotel?.wabaId && hotel.wabaId !== 'CONFIGURE_IN_SETTINGS') {
+      const hotel = await this.prisma.hotel.findUnique({ where: { id: hotelId } });
+      if (hotel?.wabaId && hotel.wabaId !== 'CONFIGURE_IN_SETTINGS') {
+        try {
           await this.whatsappService.deleteTemplateOnMeta(hotelId, hotel.wabaId, template.name);
+        } catch (e) {
+          const msg = this.getMetaErrorMessage(e);
+          throw new BadRequestException(`Failed to delete template from Meta: ${msg}`);
         }
-      } catch (e) {
-        this.logger.warn(`Meta template deletion failed for ${template.name}: ${e?.message}`);
       }
     }
 
@@ -199,8 +200,13 @@ export class TemplatesService {
       );
     }
 
-    const metaTemplates =
-      await this.whatsappService.fetchTemplatesFromMeta(hotelId, resolvedWabaId);
+    let metaTemplates: any[];
+    try {
+      metaTemplates = await this.whatsappService.fetchTemplatesFromMeta(hotelId, resolvedWabaId);
+    } catch (e) {
+      const msg = this.getMetaErrorMessage(e);
+      throw new BadRequestException(`Meta API error: ${msg}`);
+    }
 
     let synced = 0;
     let errors = 0;

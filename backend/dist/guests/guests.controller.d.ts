@@ -6,29 +6,29 @@ export declare class GuestsController {
     constructor(guestsService: GuestsService);
     getTags(req: any): Promise<{
         id: string;
-        hotelId: string;
         name: string;
-        deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
+        deletedAt: Date | null;
+        hotelId: string;
         color: string;
     }[]>;
     createTag(req: any, name: string, color: string): Promise<{
         id: string;
-        hotelId: string;
         name: string;
-        deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
+        deletedAt: Date | null;
+        hotelId: string;
         color: string;
     }>;
     deleteTag(req: any, tagId: string): Promise<{
         id: string;
-        hotelId: string;
         name: string;
-        deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
+        deletedAt: Date | null;
+        hotelId: string;
         color: string;
     }>;
     findAll(req: any, search?: string, status?: string, tag?: string, page?: number, limit?: number): Promise<{
@@ -36,11 +36,11 @@ export declare class GuestsController {
             guestTags: ({
                 tag: {
                     id: string;
-                    hotelId: string;
                     name: string;
-                    deletedAt: Date | null;
                     createdAt: Date;
                     updatedAt: Date;
+                    deletedAt: Date | null;
+                    hotelId: string;
                     color: string;
                 };
             } & {
@@ -50,14 +50,16 @@ export declare class GuestsController {
             })[];
         } & {
             id: string;
-            hotelId: string;
+            email: string | null;
             name: string | null;
-            language: string;
-            deletedAt: Date | null;
             createdAt: Date;
             updatedAt: Date;
-            email: string | null;
+            deletedAt: Date | null;
+            hotelId: string;
+            notes: string | null;
             phone: string;
+            source: import(".prisma/client").$Enums.GuestSource;
+            language: string;
             countryCode: string | null;
             gender: import(".prisma/client").$Enums.Gender | null;
             stayStatus: import(".prisma/client").$Enums.StayStatus;
@@ -67,11 +69,9 @@ export declare class GuestsController {
             bookingRef: string | null;
             pmsGuestId: string | null;
             nationality: string | null;
-            notes: string | null;
             optIn: boolean;
             optInAt: Date | null;
             optOutAt: Date | null;
-            source: import(".prisma/client").$Enums.GuestSource;
             customFields: import("@prisma/client/runtime/library").JsonValue | null;
         })[];
         meta: {
@@ -85,11 +85,11 @@ export declare class GuestsController {
         guestTags: ({
             tag: {
                 id: string;
-                hotelId: string;
                 name: string;
-                deletedAt: Date | null;
                 createdAt: Date;
                 updatedAt: Date;
+                deletedAt: Date | null;
+                hotelId: string;
                 color: string;
             };
         } & {
@@ -99,14 +99,16 @@ export declare class GuestsController {
         })[];
     } & {
         id: string;
-        hotelId: string;
+        email: string | null;
         name: string | null;
-        language: string;
-        deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
-        email: string | null;
+        deletedAt: Date | null;
+        hotelId: string;
+        notes: string | null;
         phone: string;
+        source: import(".prisma/client").$Enums.GuestSource;
+        language: string;
         countryCode: string | null;
         gender: import(".prisma/client").$Enums.Gender | null;
         stayStatus: import(".prisma/client").$Enums.StayStatus;
@@ -116,23 +118,23 @@ export declare class GuestsController {
         bookingRef: string | null;
         pmsGuestId: string | null;
         nationality: string | null;
-        notes: string | null;
         optIn: boolean;
         optInAt: Date | null;
         optOutAt: Date | null;
-        source: import(".prisma/client").$Enums.GuestSource;
         customFields: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
     create(req: any, dto: CreateGuestDto): Promise<{
         id: string;
-        hotelId: string;
+        email: string | null;
         name: string | null;
-        language: string;
-        deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
-        email: string | null;
+        deletedAt: Date | null;
+        hotelId: string;
+        notes: string | null;
         phone: string;
+        source: import(".prisma/client").$Enums.GuestSource;
+        language: string;
         countryCode: string | null;
         gender: import(".prisma/client").$Enums.Gender | null;
         stayStatus: import(".prisma/client").$Enums.StayStatus;
@@ -142,23 +144,23 @@ export declare class GuestsController {
         bookingRef: string | null;
         pmsGuestId: string | null;
         nationality: string | null;
-        notes: string | null;
         optIn: boolean;
         optInAt: Date | null;
         optOutAt: Date | null;
-        source: import(".prisma/client").$Enums.GuestSource;
         customFields: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
     update(req: any, id: string, dto: UpdateGuestDto): Promise<{
         id: string;
-        hotelId: string;
+        email: string | null;
         name: string | null;
-        language: string;
-        deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
-        email: string | null;
+        deletedAt: Date | null;
+        hotelId: string;
+        notes: string | null;
         phone: string;
+        source: import(".prisma/client").$Enums.GuestSource;
+        language: string;
         countryCode: string | null;
         gender: import(".prisma/client").$Enums.Gender | null;
         stayStatus: import(".prisma/client").$Enums.StayStatus;
@@ -168,23 +170,23 @@ export declare class GuestsController {
         bookingRef: string | null;
         pmsGuestId: string | null;
         nationality: string | null;
-        notes: string | null;
         optIn: boolean;
         optInAt: Date | null;
         optOutAt: Date | null;
-        source: import(".prisma/client").$Enums.GuestSource;
         customFields: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
     softDelete(req: any, id: string): Promise<{
         id: string;
-        hotelId: string;
+        email: string | null;
         name: string | null;
-        language: string;
-        deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
-        email: string | null;
+        deletedAt: Date | null;
+        hotelId: string;
+        notes: string | null;
         phone: string;
+        source: import(".prisma/client").$Enums.GuestSource;
+        language: string;
         countryCode: string | null;
         gender: import(".prisma/client").$Enums.Gender | null;
         stayStatus: import(".prisma/client").$Enums.StayStatus;
@@ -194,23 +196,23 @@ export declare class GuestsController {
         bookingRef: string | null;
         pmsGuestId: string | null;
         nationality: string | null;
-        notes: string | null;
         optIn: boolean;
         optInAt: Date | null;
         optOutAt: Date | null;
-        source: import(".prisma/client").$Enums.GuestSource;
         customFields: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
     forceDelete(req: any, id: string): Promise<{
         id: string;
-        hotelId: string;
+        email: string | null;
         name: string | null;
-        language: string;
-        deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
-        email: string | null;
+        deletedAt: Date | null;
+        hotelId: string;
+        notes: string | null;
         phone: string;
+        source: import(".prisma/client").$Enums.GuestSource;
+        language: string;
         countryCode: string | null;
         gender: import(".prisma/client").$Enums.Gender | null;
         stayStatus: import(".prisma/client").$Enums.StayStatus;
@@ -220,11 +222,9 @@ export declare class GuestsController {
         bookingRef: string | null;
         pmsGuestId: string | null;
         nationality: string | null;
-        notes: string | null;
         optIn: boolean;
         optInAt: Date | null;
         optOutAt: Date | null;
-        source: import(".prisma/client").$Enums.GuestSource;
         customFields: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
     importCsv(req: any, file: Express.Multer.File): Promise<{
@@ -234,14 +234,16 @@ export declare class GuestsController {
     }>;
     optOut(req: any, id: string): Promise<{
         id: string;
-        hotelId: string;
+        email: string | null;
         name: string | null;
-        language: string;
-        deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
-        email: string | null;
+        deletedAt: Date | null;
+        hotelId: string;
+        notes: string | null;
         phone: string;
+        source: import(".prisma/client").$Enums.GuestSource;
+        language: string;
         countryCode: string | null;
         gender: import(".prisma/client").$Enums.Gender | null;
         stayStatus: import(".prisma/client").$Enums.StayStatus;
@@ -251,11 +253,9 @@ export declare class GuestsController {
         bookingRef: string | null;
         pmsGuestId: string | null;
         nationality: string | null;
-        notes: string | null;
         optIn: boolean;
         optInAt: Date | null;
         optOutAt: Date | null;
-        source: import(".prisma/client").$Enums.GuestSource;
         customFields: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
     addTag(req: any, id: string, tagId: string): Promise<{

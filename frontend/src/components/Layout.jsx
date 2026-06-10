@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { auth } from '../api/index.js';
 import {
   LayoutDashboard,
   MessageCircle,
@@ -40,17 +41,23 @@ const mobileNav = [
 export default function Layout() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [collapsed,         setCollapsed]         = useState(false);
-  const [mobileDrawerOpen,  setMobileDrawerOpen]  = useState(false);
+  const [collapsed,        setCollapsed]        = useState(false);
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const [user,             setUser]             = useState(null);
 
-  const userRaw = localStorage.getItem('user');
-  const user = userRaw
-    ? JSON.parse(userRaw)
-    : { name: 'Admin', role: 'admin', hotel: { name: 'Hotel' } };
+  const fetchUser = useCallback(async () => {
+    try {
+      const res = await auth.me();
+      setUser(res.data?.data || res.data);
+    } catch {
+      // Token invalid — interceptor will redirect to /login
+    }
+  }, []);
+
+  useEffect(() => { fetchUser(); }, [fetchUser]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    localStorage.removeItem('user');
     navigate('/login');
   };
 
@@ -69,8 +76,8 @@ export default function Layout() {
     return () => { document.body.style.overflow = ''; };
   }, [mobileDrawerOpen]);
 
-  const initials  = (user?.name || 'A').charAt(0).toUpperCase();
-  const hotelName = user?.hotel?.name || 'Hotel';
+  const initials  = (user?.name || '…').charAt(0).toUpperCase();
+  const hotelName = user?.hotel?.name || '…';
 
   return (
     /*

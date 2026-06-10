@@ -6,28 +6,28 @@ export declare class CampaignsController {
     constructor(campaignsService: CampaignsService);
     findAll(req: any, status?: string, page?: number, limit?: number): Promise<{
         data: ({
+            _count: {
+                recipients: number;
+            };
             template: {
                 id: string;
                 name: string;
                 category: import(".prisma/client").$Enums.TemplateCategory;
             };
-            _count: {
-                recipients: number;
-            };
         } & {
             id: string;
-            hotelId: string;
             name: string;
-            status: import(".prisma/client").$Enums.CampaignStatus;
-            deletedAt: Date | null;
             createdAt: Date;
             updatedAt: Date;
+            status: import(".prisma/client").$Enums.CampaignStatus;
+            deletedAt: Date | null;
+            hotelId: string;
             description: string | null;
             templateId: string;
+            variableValues: import("@prisma/client/runtime/library").JsonValue | null;
             createdById: string;
             audienceType: import(".prisma/client").$Enums.AudienceType;
             audienceFilter: import("@prisma/client/runtime/library").JsonValue | null;
-            variableValues: import("@prisma/client/runtime/library").JsonValue | null;
             scheduledAt: Date | null;
             startedAt: Date | null;
             completedAt: Date | null;
@@ -47,15 +47,22 @@ export declare class CampaignsController {
         };
     }>;
     findOne(req: any, id: string): Promise<{
+        _count: {
+            recipients: number;
+        };
         template: {
             id: string;
-            hotelId: string;
-            metaTemplateId: string | null;
             name: string;
-            displayName: string | null;
-            category: import(".prisma/client").$Enums.TemplateCategory;
-            language: string;
+            createdAt: Date;
+            updatedAt: Date;
             status: import(".prisma/client").$Enums.TemplateStatus;
+            deletedAt: Date | null;
+            hotelId: string;
+            displayName: string | null;
+            components: import("@prisma/client/runtime/library").JsonValue | null;
+            category: import(".prisma/client").$Enums.TemplateCategory;
+            metaTemplateId: string | null;
+            language: string;
             rejectionReason: string | null;
             headerType: import(".prisma/client").$Enums.HeaderType;
             headerText: string | null;
@@ -64,30 +71,23 @@ export declare class CampaignsController {
             footerText: string | null;
             variables: import("@prisma/client/runtime/library").JsonValue | null;
             buttons: import("@prisma/client/runtime/library").JsonValue | null;
-            components: import("@prisma/client/runtime/library").JsonValue | null;
             previewData: import("@prisma/client/runtime/library").JsonValue | null;
             syncedAt: Date | null;
-            deletedAt: Date | null;
-            createdAt: Date;
-            updatedAt: Date;
-        };
-        _count: {
-            recipients: number;
         };
     } & {
         id: string;
-        hotelId: string;
         name: string;
-        status: import(".prisma/client").$Enums.CampaignStatus;
-        deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
+        status: import(".prisma/client").$Enums.CampaignStatus;
+        deletedAt: Date | null;
+        hotelId: string;
         description: string | null;
         templateId: string;
+        variableValues: import("@prisma/client/runtime/library").JsonValue | null;
         createdById: string;
         audienceType: import(".prisma/client").$Enums.AudienceType;
         audienceFilter: import("@prisma/client/runtime/library").JsonValue | null;
-        variableValues: import("@prisma/client/runtime/library").JsonValue | null;
         scheduledAt: Date | null;
         startedAt: Date | null;
         completedAt: Date | null;
@@ -100,15 +100,22 @@ export declare class CampaignsController {
         bullJobId: string | null;
     }>;
     create(req: any, dto: CreateCampaignDto): Promise<{
+        _count: {
+            recipients: number;
+        };
         template: {
             id: string;
-            hotelId: string;
-            metaTemplateId: string | null;
             name: string;
-            displayName: string | null;
-            category: import(".prisma/client").$Enums.TemplateCategory;
-            language: string;
+            createdAt: Date;
+            updatedAt: Date;
             status: import(".prisma/client").$Enums.TemplateStatus;
+            deletedAt: Date | null;
+            hotelId: string;
+            displayName: string | null;
+            components: import("@prisma/client/runtime/library").JsonValue | null;
+            category: import(".prisma/client").$Enums.TemplateCategory;
+            metaTemplateId: string | null;
+            language: string;
             rejectionReason: string | null;
             headerType: import(".prisma/client").$Enums.HeaderType;
             headerText: string | null;
@@ -117,30 +124,23 @@ export declare class CampaignsController {
             footerText: string | null;
             variables: import("@prisma/client/runtime/library").JsonValue | null;
             buttons: import("@prisma/client/runtime/library").JsonValue | null;
-            components: import("@prisma/client/runtime/library").JsonValue | null;
             previewData: import("@prisma/client/runtime/library").JsonValue | null;
             syncedAt: Date | null;
-            deletedAt: Date | null;
-            createdAt: Date;
-            updatedAt: Date;
-        };
-        _count: {
-            recipients: number;
         };
     } & {
         id: string;
-        hotelId: string;
         name: string;
-        status: import(".prisma/client").$Enums.CampaignStatus;
-        deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
+        status: import(".prisma/client").$Enums.CampaignStatus;
+        deletedAt: Date | null;
+        hotelId: string;
         description: string | null;
         templateId: string;
+        variableValues: import("@prisma/client/runtime/library").JsonValue | null;
         createdById: string;
         audienceType: import(".prisma/client").$Enums.AudienceType;
         audienceFilter: import("@prisma/client/runtime/library").JsonValue | null;
-        variableValues: import("@prisma/client/runtime/library").JsonValue | null;
         scheduledAt: Date | null;
         startedAt: Date | null;
         completedAt: Date | null;
@@ -153,15 +153,22 @@ export declare class CampaignsController {
         bullJobId: string | null;
     }>;
     update(req: any, id: string, dto: UpdateCampaignDto): Promise<{
+        _count: {
+            recipients: number;
+        };
         template: {
             id: string;
-            hotelId: string;
-            metaTemplateId: string | null;
             name: string;
-            displayName: string | null;
-            category: import(".prisma/client").$Enums.TemplateCategory;
-            language: string;
+            createdAt: Date;
+            updatedAt: Date;
             status: import(".prisma/client").$Enums.TemplateStatus;
+            deletedAt: Date | null;
+            hotelId: string;
+            displayName: string | null;
+            components: import("@prisma/client/runtime/library").JsonValue | null;
+            category: import(".prisma/client").$Enums.TemplateCategory;
+            metaTemplateId: string | null;
+            language: string;
             rejectionReason: string | null;
             headerType: import(".prisma/client").$Enums.HeaderType;
             headerText: string | null;
@@ -170,30 +177,23 @@ export declare class CampaignsController {
             footerText: string | null;
             variables: import("@prisma/client/runtime/library").JsonValue | null;
             buttons: import("@prisma/client/runtime/library").JsonValue | null;
-            components: import("@prisma/client/runtime/library").JsonValue | null;
             previewData: import("@prisma/client/runtime/library").JsonValue | null;
             syncedAt: Date | null;
-            deletedAt: Date | null;
-            createdAt: Date;
-            updatedAt: Date;
-        };
-        _count: {
-            recipients: number;
         };
     } & {
         id: string;
-        hotelId: string;
         name: string;
-        status: import(".prisma/client").$Enums.CampaignStatus;
-        deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
+        status: import(".prisma/client").$Enums.CampaignStatus;
+        deletedAt: Date | null;
+        hotelId: string;
         description: string | null;
         templateId: string;
+        variableValues: import("@prisma/client/runtime/library").JsonValue | null;
         createdById: string;
         audienceType: import(".prisma/client").$Enums.AudienceType;
         audienceFilter: import("@prisma/client/runtime/library").JsonValue | null;
-        variableValues: import("@prisma/client/runtime/library").JsonValue | null;
         scheduledAt: Date | null;
         startedAt: Date | null;
         completedAt: Date | null;
@@ -207,18 +207,18 @@ export declare class CampaignsController {
     }>;
     softDelete(req: any, id: string): Promise<{
         id: string;
-        hotelId: string;
         name: string;
-        status: import(".prisma/client").$Enums.CampaignStatus;
-        deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
+        status: import(".prisma/client").$Enums.CampaignStatus;
+        deletedAt: Date | null;
+        hotelId: string;
         description: string | null;
         templateId: string;
+        variableValues: import("@prisma/client/runtime/library").JsonValue | null;
         createdById: string;
         audienceType: import(".prisma/client").$Enums.AudienceType;
         audienceFilter: import("@prisma/client/runtime/library").JsonValue | null;
-        variableValues: import("@prisma/client/runtime/library").JsonValue | null;
         scheduledAt: Date | null;
         startedAt: Date | null;
         completedAt: Date | null;
@@ -231,15 +231,22 @@ export declare class CampaignsController {
         bullJobId: string | null;
     }>;
     launch(req: any, id: string): Promise<{
+        _count: {
+            recipients: number;
+        };
         template: {
             id: string;
-            hotelId: string;
-            metaTemplateId: string | null;
             name: string;
-            displayName: string | null;
-            category: import(".prisma/client").$Enums.TemplateCategory;
-            language: string;
+            createdAt: Date;
+            updatedAt: Date;
             status: import(".prisma/client").$Enums.TemplateStatus;
+            deletedAt: Date | null;
+            hotelId: string;
+            displayName: string | null;
+            components: import("@prisma/client/runtime/library").JsonValue | null;
+            category: import(".prisma/client").$Enums.TemplateCategory;
+            metaTemplateId: string | null;
+            language: string;
             rejectionReason: string | null;
             headerType: import(".prisma/client").$Enums.HeaderType;
             headerText: string | null;
@@ -248,30 +255,23 @@ export declare class CampaignsController {
             footerText: string | null;
             variables: import("@prisma/client/runtime/library").JsonValue | null;
             buttons: import("@prisma/client/runtime/library").JsonValue | null;
-            components: import("@prisma/client/runtime/library").JsonValue | null;
             previewData: import("@prisma/client/runtime/library").JsonValue | null;
             syncedAt: Date | null;
-            deletedAt: Date | null;
-            createdAt: Date;
-            updatedAt: Date;
-        };
-        _count: {
-            recipients: number;
         };
     } & {
         id: string;
-        hotelId: string;
         name: string;
-        status: import(".prisma/client").$Enums.CampaignStatus;
-        deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
+        status: import(".prisma/client").$Enums.CampaignStatus;
+        deletedAt: Date | null;
+        hotelId: string;
         description: string | null;
         templateId: string;
+        variableValues: import("@prisma/client/runtime/library").JsonValue | null;
         createdById: string;
         audienceType: import(".prisma/client").$Enums.AudienceType;
         audienceFilter: import("@prisma/client/runtime/library").JsonValue | null;
-        variableValues: import("@prisma/client/runtime/library").JsonValue | null;
         scheduledAt: Date | null;
         startedAt: Date | null;
         completedAt: Date | null;
@@ -285,18 +285,18 @@ export declare class CampaignsController {
     }>;
     cancel(req: any, id: string): Promise<{
         id: string;
-        hotelId: string;
         name: string;
-        status: import(".prisma/client").$Enums.CampaignStatus;
-        deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
+        status: import(".prisma/client").$Enums.CampaignStatus;
+        deletedAt: Date | null;
+        hotelId: string;
         description: string | null;
         templateId: string;
+        variableValues: import("@prisma/client/runtime/library").JsonValue | null;
         createdById: string;
         audienceType: import(".prisma/client").$Enums.AudienceType;
         audienceFilter: import("@prisma/client/runtime/library").JsonValue | null;
-        variableValues: import("@prisma/client/runtime/library").JsonValue | null;
         scheduledAt: Date | null;
         startedAt: Date | null;
         completedAt: Date | null;
@@ -312,27 +312,27 @@ export declare class CampaignsController {
         data: ({
             guest: {
                 id: string;
-                name: string;
                 email: string;
+                name: string;
                 phone: string;
             };
         } & {
             id: string;
-            status: import(".prisma/client").$Enums.RecipientStatus;
             createdAt: Date;
             updatedAt: Date;
-            campaignId: string;
-            variableValues: import("@prisma/client/runtime/library").JsonValue | null;
-            guestId: string;
+            status: import(".prisma/client").$Enums.RecipientStatus;
             phone: string;
+            sentAt: Date | null;
+            guestId: string;
             waMessageId: string | null;
+            campaignId: string;
             errorCode: string | null;
             errorMessage: string | null;
-            retryCount: number;
-            sentAt: Date | null;
             deliveredAt: Date | null;
             readAt: Date | null;
             failedAt: Date | null;
+            variableValues: import("@prisma/client/runtime/library").JsonValue | null;
+            retryCount: number;
         })[];
         meta: {
             total: number;

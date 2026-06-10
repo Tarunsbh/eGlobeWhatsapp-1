@@ -1,8 +1,9 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ScheduleModule } from '@nestjs/schedule';
 import { BullModule } from '@nestjs/bull';
+import { JwtModule } from '@nestjs/jwt';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { HotelsModule } from './hotels/hotels.module';
@@ -18,6 +19,9 @@ import { QueueModule } from './queue/queue.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { LogsModule } from './logs/logs.module';
 import { GatewayModule } from './gateway/gateway.module';
+import { SuperAdminModule } from './super-admin/super-admin.module';
+import { AuditModule } from './audit/audit.module';
+import { TenantMiddleware } from './common/middleware/tenant.middleware';
 import { HealthController } from './health.controller';
 
 @Module({
@@ -46,8 +50,21 @@ import { HealthController } from './health.controller';
       inject: [ConfigService],
     }),
 
+    // Shared JWT module (used by TenantMiddleware and SuperAdminGuard)
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: (config: ConfigService) => ({
+        secret: config.get('JWT_SECRET'),
+        signOptions: { expiresIn: config.get('JWT_EXPIRES_IN') || '7d' },
+      }),
+      inject: [ConfigService],
+      global: true,
+    }),
+
     PrismaModule,
+    AuditModule,
     AuthModule,
+    SuperAdminModule,
     HotelsModule,
     GuestsModule,
     WhatsAppModule,
@@ -64,4 +81,8 @@ import { HealthController } from './health.controller';
   ],
   controllers: [HealthController],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(TenantMiddleware).forRoutes('*');
+  }
+}

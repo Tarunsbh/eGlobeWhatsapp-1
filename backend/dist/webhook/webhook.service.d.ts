@@ -20,9 +20,9 @@ export declare class WebhookService {
         hotels: {
             id: string;
             name: string;
+            isActive: boolean;
             phoneNumberId: string;
             wabaId: string;
-            isActive: boolean;
         }[];
         timestamp: string;
     }>;

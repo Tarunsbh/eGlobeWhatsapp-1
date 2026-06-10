@@ -13,6 +13,9 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+      # Auto-apply base schema + enterprise migration on first boot
+      - ./schema.sql:/docker-entrypoint-initdb.d/01_base_schema.sql:ro
+      - ./backend/prisma/migrations/001_enterprise_schema.sql:/docker-entrypoint-initdb.d/02_enterprise_schema.sql:ro
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-root_secret_change_me}"]
       interval: 10s
@@ -73,17 +76,59 @@ services:
       timeout: 10s
       retries: 3
 
-  # ── Frontend (React/Vite static) ───────────────────────────
+  # ── Hotel / Tenant Panel (port 3000) ──────────────────────
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+    image: eglobewhatsapp-frontend
     container_name: hotel_wa_frontend
     restart: unless-stopped
     depends_on:
       - backend
     ports:
-      - "8080:80"
+      - "3000:80"
+    volumes:
+      - ./frontend/nginx-hotel.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - hotel_wa_net
+
+  # ── Super Admin Panel (port 80 → localhost/super-admin/login) ─
+  admin-frontend:
+    image: eglobewhatsapp-frontend
+    container_name: hotel_wa_admin_frontend
+    restart: unless-stopped
+    depends_on:
+      - frontend
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend/nginx-admin.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - hotel_wa_net
+
+  # ── ngrok tunnel (WhatsApp webhook) ───────────────────────
+  # Usage:  docker compose --profile tunnel up -d
+  # Then:   visit http://localhost:4040 to get the public URL
+  #         Set webhook in Meta: https://<id>.ngrok-free.app/api/v1/webhook
+  # Requires NGROK_AUTHTOKEN in .env  (free at https://dashboard.ngrok.com)
+  # Optional: set NGROK_DOMAIN for a stable free static domain
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: hotel_wa_ngrok
+    restart: unless-stopped
+    profiles: [tunnel]
+    command: >
+      http backend:3001
+      --log=stdout
+      ${NGROK_DOMAIN:+--domain=${NGROK_DOMAIN}}
+    environment:
+      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
+    ports:
+      - "4040:4040"
+    depends_on:
+      backend:
+        condition: service_healthy
     networks:
       - hotel_wa_net
 

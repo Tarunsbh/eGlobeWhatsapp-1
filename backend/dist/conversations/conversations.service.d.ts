@@ -19,24 +19,24 @@ export declare class ConversationsService {
         data: ({
             guest: {
                 id: string;
-                name: string;
                 email: string;
+                name: string;
                 phone: string;
                 roomNumber: string;
             };
             assignedAgent: {
                 id: string;
-                name: string;
                 email: string;
+                name: string;
             };
         } & {
             id: string;
-            hotelId: string;
-            status: import(".prisma/client").$Enums.ConversationStatus;
-            deletedAt: Date | null;
             createdAt: Date;
             updatedAt: Date;
+            status: import(".prisma/client").$Enums.ConversationStatus;
+            deletedAt: Date | null;
             tags: import("@prisma/client/runtime/library").JsonValue | null;
+            hotelId: string;
             guestId: string;
             assignedAgentId: string | null;
             channel: string;
@@ -57,14 +57,16 @@ export declare class ConversationsService {
     findOne(hotelId: string, id: string): Promise<{
         guest: {
             id: string;
-            hotelId: string;
+            email: string | null;
             name: string | null;
-            language: string;
-            deletedAt: Date | null;
             createdAt: Date;
             updatedAt: Date;
-            email: string | null;
+            deletedAt: Date | null;
+            hotelId: string;
+            notes: string | null;
             phone: string;
+            source: import(".prisma/client").$Enums.GuestSource;
+            language: string;
             countryCode: string | null;
             gender: import(".prisma/client").$Enums.Gender | null;
             stayStatus: import(".prisma/client").$Enums.StayStatus;
@@ -74,26 +76,24 @@ export declare class ConversationsService {
             bookingRef: string | null;
             pmsGuestId: string | null;
             nationality: string | null;
-            notes: string | null;
             optIn: boolean;
             optInAt: Date | null;
             optOutAt: Date | null;
-            source: import(".prisma/client").$Enums.GuestSource;
             customFields: import("@prisma/client/runtime/library").JsonValue | null;
         };
         assignedAgent: {
             id: string;
-            name: string;
             email: string;
+            name: string;
         };
     } & {
         id: string;
-        hotelId: string;
-        status: import(".prisma/client").$Enums.ConversationStatus;
-        deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
+        status: import(".prisma/client").$Enums.ConversationStatus;
+        deletedAt: Date | null;
         tags: import("@prisma/client/runtime/library").JsonValue | null;
+        hotelId: string;
         guestId: string;
         assignedAgentId: string | null;
         channel: string;
@@ -112,17 +112,17 @@ export declare class ConversationsService {
         };
         assignedAgent: {
             id: string;
-            name: string;
             email: string;
+            name: string;
         };
     } & {
         id: string;
-        hotelId: string;
-        status: import(".prisma/client").$Enums.ConversationStatus;
-        deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
+        status: import(".prisma/client").$Enums.ConversationStatus;
+        deletedAt: Date | null;
         tags: import("@prisma/client/runtime/library").JsonValue | null;
+        hotelId: string;
         guestId: string;
         assignedAgentId: string | null;
         channel: string;
@@ -135,12 +135,12 @@ export declare class ConversationsService {
     }>;
     updateStatus(hotelId: string, id: string, status: string): Promise<{
         id: string;
-        hotelId: string;
-        status: import(".prisma/client").$Enums.ConversationStatus;
-        deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
+        status: import(".prisma/client").$Enums.ConversationStatus;
+        deletedAt: Date | null;
         tags: import("@prisma/client/runtime/library").JsonValue | null;
+        hotelId: string;
         guestId: string;
         assignedAgentId: string | null;
         channel: string;
@@ -153,12 +153,12 @@ export declare class ConversationsService {
     }>;
     markRead(hotelId: string, id: string): Promise<{
         id: string;
-        hotelId: string;
-        status: import(".prisma/client").$Enums.ConversationStatus;
-        deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
+        status: import(".prisma/client").$Enums.ConversationStatus;
+        deletedAt: Date | null;
         tags: import("@prisma/client/runtime/library").JsonValue | null;
+        hotelId: string;
         guestId: string;
         assignedAgentId: string | null;
         channel: string;
@@ -171,12 +171,12 @@ export declare class ConversationsService {
     }>;
     remove(hotelId: string, id: string): Promise<{
         id: string;
-        hotelId: string;
-        status: import(".prisma/client").$Enums.ConversationStatus;
-        deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
+        status: import(".prisma/client").$Enums.ConversationStatus;
+        deletedAt: Date | null;
         tags: import("@prisma/client/runtime/library").JsonValue | null;
+        hotelId: string;
         guestId: string;
         assignedAgentId: string | null;
         channel: string;

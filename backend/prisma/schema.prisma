@@ -1,6 +1,5 @@
-// Prisma Schema — Hotel WhatsApp SaaS
-// Generator: @prisma/client
-// Datasource: MySQL
+// Prisma Schema — Hotel WhatsApp SaaS — Enterprise Multi-Tenant
+// Version: 2.0.0
 
 generator client {
   provider = "prisma-client-js"
@@ -11,23 +10,64 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ─── SUPER ADMIN ─────────────────────────────────────────────
+// Completely separate from Hotel/User hierarchy — platform operators only
+model SuperAdmin {
+  id                String    @id @default(uuid())
+  email             String    @unique
+  passwordHash      String    @map("password_hash")
+  name              String
+  role              SuperAdminRole @default(SUPPORT)
+  isActive          Boolean   @default(true) @map("is_active")
+  mfaEnabled        Boolean   @default(false) @map("mfa_enabled")
+  mfaSecret         String?   @map("mfa_secret")
+  lastLoginAt       DateTime? @map("last_login_at")
+  lastLoginIp       String?   @map("last_login_ip")
+  failedAttempts    Int       @default(0) @map("failed_attempts")
+  lockedUntil       DateTime? @map("locked_until")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  refreshTokens     RefreshToken[]
+  auditLogs         AuditLog[]     @relation("SuperAdminAudit")
+
+  @@map("super_admins")
+}
+
+enum SuperAdminRole {
+  SUPER_ADMIN @map("super_admin")
+  ADMIN       @map("admin")
+  SUPPORT     @map("support")
+  BILLING     @map("billing")
+}
+
 // ─── HOTEL ───────────────────────────────────────────────────
 model Hotel {
-  id                   String   @id @default(uuid())
+  id                   String        @id @default(uuid())
+  hotelCode            String?       @unique @map("hotel_code")
   name                 String
-  slug                 String   @unique
-  phoneNumberId        String   @map("phone_number_id")
-  wabaId               String   @map("waba_id")
-  businessId           String?  @map("business_id")
-  webhookVerifyToken   String   @map("webhook_verify_token")
-  timezone             String   @default("UTC")
-  country              String   @default("IN")
-  plan                 Plan     @default(STARTER)
-  isActive             Boolean  @default(true) @map("is_active")
+  slug                 String        @unique
+  contactPerson        String?       @map("contact_person")
+  mobile               String?
+  address              String?       @db.Text
+  gstNumber            String?       @map("gst_number")
+  phoneNumberId        String        @map("phone_number_id")
+  wabaId               String        @map("waba_id")
+  businessId           String?       @map("business_id")
+  webhookVerifyToken   String        @map("webhook_verify_token")
+  timezone             String        @default("UTC")
+  country              String        @default("IN")
+  plan                 Plan          @default(TRIAL)
+  billingCycle         BillingCycle  @default(MONTHLY) @map("billing_cycle")
+  isActive             Boolean       @default(true) @map("is_active")
+  status               HotelStatus   @default(TRIAL)
+  suspendedAt          DateTime?     @map("suspended_at")
+  suspensionReason     String?       @map("suspension_reason") @db.Text
+  trialEndsAt          DateTime?     @map("trial_ends_at")
   settings             Json?
-  deletedAt            DateTime? @map("deleted_at")
-  createdAt            DateTime @default(now()) @map("created_at")
-  updatedAt            DateTime @updatedAt @map("updated_at")
+  deletedAt            DateTime?     @map("deleted_at")
+  createdAt            DateTime      @default(now()) @map("created_at")
+  updatedAt            DateTime      @updatedAt @map("updated_at")
 
   users               User[]
   guests              Guest[]
@@ -40,48 +80,273 @@ model Hotel {
   tokens              TokenStorage[]
   tags                Tag[]
   logs                Log[]
+  subscription        Subscription?
+  invoices            Invoice[]
+  messageUsages       MessageUsage[]
+  auditLogs           AuditLog[]     @relation("HotelAudit")
 
   @@index([wabaId])
   @@index([phoneNumberId])
+  @@index([status])
+  @@index([deletedAt])
   @@map("hotels")
 }
 
 enum Plan {
+  TRIAL        @map("trial")
+  BASIC        @map("basic")
+  STANDARD     @map("standard")
+  PREMIUM      @map("premium")
+  ENTERPRISE   @map("enterprise")
+  // kept for back-compat
   STARTER      @map("starter")
   PROFESSIONAL @map("professional")
-  ENTERPRISE   @map("enterprise")
+}
+
+enum HotelStatus {
+  TRIAL     @map("trial")
+  ACTIVE    @map("active")
+  SUSPENDED @map("suspended")
+  EXPIRED   @map("expired")
+}
+
+enum BillingCycle {
+  MONTHLY   @map("monthly")
+  QUARTERLY @map("quarterly")
+  ANNUAL    @map("annual")
 }
 
 // ─── USER ────────────────────────────────────────────────────
 model User {
-  id           String    @id @default(uuid())
-  hotelId      String    @map("hotel_id")
-  email        String
-  passwordHash String    @map("password_hash")
-  name         String
-  role         Role      @default(AGENT)
-  avatarUrl    String?   @map("avatar_url")
-  isActive     Boolean   @default(true) @map("is_active")
-  lastLoginAt  DateTime? @map("last_login_at")
-  deletedAt    DateTime? @map("deleted_at")
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @updatedAt @map("updated_at")
+  id                  String    @id @default(uuid())
+  hotelId             String    @map("hotel_id")
+  email               String
+  passwordHash        String    @map("password_hash")
+  name                String
+  role                Role      @default(AGENT)
+  phone               String?
+  avatarUrl           String?   @map("avatar_url")
+  isActive            Boolean   @default(true) @map("is_active")
+  forcePasswordChange Boolean   @default(false) @map("force_password_change")
+  passwordChangedAt   DateTime? @map("password_changed_at")
+  mfaEnabled          Boolean   @default(false) @map("mfa_enabled")
+  mfaSecret           String?   @map("mfa_secret")
+  failedAttempts      Int       @default(0) @map("failed_attempts")
+  lockedUntil         DateTime? @map("locked_until")
+  lastLoginAt         DateTime? @map("last_login_at")
+  lastLoginIp         String?   @map("last_login_ip")
+  deletedAt           DateTime? @map("deleted_at")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
 
-  hotel        Hotel     @relation(fields: [hotelId], references: [id], onDelete: Cascade)
-  conversations Conversation[] @relation("AgentConversations")
-  campaigns    Campaign[]
-  automationRules AutomationRule[]
-  sentMessages Message[]
+  hotel            Hotel          @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  conversations    Conversation[] @relation("AgentConversations")
+  campaigns        Campaign[]
+  automationRules  AutomationRule[]
+  sentMessages     Message[]
+  refreshTokens    RefreshToken[]
+  auditLogs        AuditLog[]     @relation("UserAudit")
 
   @@unique([email, hotelId])
   @@index([hotelId])
+  @@index([role])
+  @@index([deletedAt])
   @@map("users")
 }
 
 enum Role {
-  ADMIN   @map("admin")
-  MANAGER @map("manager")
-  AGENT   @map("agent")
+  ADMIN           @map("admin")
+  MANAGER         @map("manager")
+  AGENT           @map("agent")
+  OWNER           @map("owner")
+  GENERAL_MANAGER @map("general_manager")
+  FRONT_OFFICE    @map("front_office")
+  RESERVATIONS    @map("reservations")
+  MARKETING       @map("marketing")
+  ACCOUNTANT      @map("accountant")
+  CUSTOM          @map("custom")
+}
+
+// ─── REFRESH TOKEN ───────────────────────────────────────────
+model RefreshToken {
+  id           String    @id @default(uuid())
+  tokenHash    String    @unique @map("token_hash")
+  userId       String?   @map("user_id")
+  superAdminId String?   @map("super_admin_id")
+  userAgent    String?   @map("user_agent") @db.VarChar(500)
+  ip           String?
+  expiresAt    DateTime  @map("expires_at")
+  revokedAt    DateTime? @map("revoked_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  user         User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  superAdmin   SuperAdmin? @relation(fields: [superAdminId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([superAdminId])
+  @@index([expiresAt])
+  @@map("refresh_tokens")
+}
+
+// ─── SUBSCRIPTION PLAN ───────────────────────────────────────
+model SubscriptionPlan {
+  id                  String   @id @default(uuid())
+  name                String   @unique
+  displayName         String   @map("display_name")
+  plan                Plan
+  monthlyPrice        Int      @map("monthly_price") // paise / cents
+  annualPrice         Int      @map("annual_price")
+  maxUsers            Int      @map("max_users")
+  maxContacts         Int      @map("max_contacts")
+  maxCampaigns        Int      @map("max_campaigns")   // per month
+  maxWhatsappNumbers  Int      @map("max_whatsapp_numbers")
+  maxApiCallsPerMonth Int      @map("max_api_calls_per_month")
+  maxAutomations      Int      @map("max_automations")
+  features            Json     // List of feature flags
+  isActive            Boolean  @default(true) @map("is_active")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  subscriptions       Subscription[]
+
+  @@map("subscription_plans")
+}
+
+// ─── SUBSCRIPTION ────────────────────────────────────────────
+model Subscription {
+  id            String             @id @default(uuid())
+  hotelId       String             @unique @map("hotel_id")
+  planId        String             @map("plan_id")
+  status        SubscriptionStatus @default(TRIAL)
+  billingCycle  BillingCycle       @default(MONTHLY) @map("billing_cycle")
+  currentPeriodStart DateTime      @map("current_period_start")
+  currentPeriodEnd   DateTime      @map("current_period_end")
+  autoRenew     Boolean            @default(true) @map("auto_renew")
+  cancelledAt   DateTime?          @map("cancelled_at")
+  cancelReason  String?            @map("cancel_reason") @db.Text
+  notes         String?            @db.Text
+  createdAt     DateTime           @default(now()) @map("created_at")
+  updatedAt     DateTime           @updatedAt @map("updated_at")
+
+  hotel         Hotel              @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  plan          SubscriptionPlan   @relation(fields: [planId], references: [id])
+  invoices      Invoice[]
+
+  @@index([status])
+  @@index([currentPeriodEnd])
+  @@map("subscriptions")
+}
+
+enum SubscriptionStatus {
+  TRIAL    @map("trial")
+  ACTIVE   @map("active")
+  PAST_DUE @map("past_due")
+  EXPIRED  @map("expired")
+  CANCELLED @map("cancelled")
+}
+
+// ─── INVOICE ─────────────────────────────────────────────────
+model Invoice {
+  id              String        @id @default(uuid())
+  invoiceNumber   String        @unique @map("invoice_number")
+  hotelId         String        @map("hotel_id")
+  subscriptionId  String?       @map("subscription_id")
+  subtotal        Int           // paise
+  taxAmount       Int           @default(0) @map("tax_amount")
+  taxPercent      Float         @default(0) @map("tax_percent")
+  total           Int           // paise
+  currency        String        @default("INR")
+  status          InvoiceStatus @default(DRAFT)
+  dueDate         DateTime      @map("due_date")
+  paidAt          DateTime?     @map("paid_at")
+  sentAt          DateTime?     @map("sent_at")
+  notes           String?       @db.Text
+  lineItems       Json          @map("line_items")
+  billingAddress  Json?         @map("billing_address")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  hotel           Hotel         @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  subscription    Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+  payments        Payment[]
+  messageUsages   MessageUsage[]
+
+  @@index([hotelId])
+  @@index([status])
+  @@index([dueDate])
+  @@map("invoices")
+}
+
+enum InvoiceStatus {
+  DRAFT   @map("draft")
+  SENT    @map("sent")
+  PAID    @map("paid")
+  OVERDUE @map("overdue")
+  VOID    @map("void")
+}
+
+// ─── PAYMENT ─────────────────────────────────────────────────
+model Payment {
+  id              String        @id @default(uuid())
+  invoiceId       String        @map("invoice_id")
+  hotelId         String        @map("hotel_id")
+  amount          Int           // paise
+  currency        String        @default("INR")
+  gateway         PaymentGateway
+  gatewayOrderId  String?       @map("gateway_order_id")
+  gatewayPaymentId String?      @unique @map("gateway_payment_id")
+  status          PaymentStatus @default(PENDING)
+  failureReason   String?       @map("failure_reason")
+  metadata        Json?
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  invoice         Invoice       @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
+  @@index([status])
+  @@map("payments")
+}
+
+enum PaymentGateway {
+  RAZORPAY @map("razorpay")
+  STRIPE   @map("stripe")
+  PAYPAL   @map("paypal")
+  MANUAL   @map("manual")
+}
+
+enum PaymentStatus {
+  PENDING   @map("pending")
+  SUCCESS   @map("success")
+  FAILED    @map("failed")
+  REFUNDED  @map("refunded")
+}
+
+// ─── AUDIT LOG ───────────────────────────────────────────────
+model AuditLog {
+  id           BigInt   @id @default(autoincrement())
+  hotelId      String?  @map("hotel_id")
+  userId       String?  @map("user_id")
+  superAdminId String?  @map("super_admin_id")
+  action       String   // e.g. "user.create", "campaign.delete"
+  resource     String   // table/entity name
+  resourceId   String?  @map("resource_id")
+  oldValues    Json?    @map("old_values")
+  newValues    Json?    @map("new_values")
+  ip           String?
+  userAgent    String?  @map("user_agent") @db.VarChar(500)
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  hotel        Hotel?      @relation("HotelAudit", fields: [hotelId], references: [id], onDelete: Cascade)
+  user         User?       @relation("UserAudit", fields: [userId], references: [id], onDelete: SetNull)
+  superAdmin   SuperAdmin? @relation("SuperAdminAudit", fields: [superAdminId], references: [id], onDelete: SetNull)
+
+  @@index([hotelId])
+  @@index([userId])
+  @@index([superAdminId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
 }
 
 // ─── TOKEN STORAGE ───────────────────────────────────────────
@@ -565,6 +830,7 @@ model Log {
   @@index([createdAt])
   @@map("logs")
 }
+
 enum LogType {
   API        @map("api")
   ERROR      @map("error")
@@ -581,4 +847,50 @@ enum LogLevel {
   WARN  @map("warn")
   ERROR @map("error")
   FATAL @map("fatal")
+}
+
+// ─── MESSAGE PRICING ─────────────────────────────────────────
+// Stores Meta base cost + eGlobe markup per message type/country.
+// sellingPrice = metaBasePrice + markupAmount (stored in paise).
+model MessagePricing {
+  id            String   @id @default(uuid())
+  messageType   String   @map("message_type")        // utility | marketing | authentication | service
+  country       String   @default("IN")
+  metaBasePrice Int      @map("meta_base_price")      // paise — what Meta charges
+  markupAmount  Int      @map("markup_amount")        // paise — eGlobe margin
+  sellingPrice  Int      @map("selling_price")        // metaBasePrice + markupAmount
+  currency      String   @default("INR")
+  isActive      Boolean  @default(true) @map("is_active")
+  effectiveFrom DateTime @default(now()) @map("effective_from")
+  notes         String?  @db.Text
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@unique([messageType, country])
+  @@index([isActive])
+  @@map("message_pricing")
+}
+
+// ─── MESSAGE USAGE LEDGER ────────────────────────────────────
+// One row per billable message. Written at send time.
+model MessageUsage {
+  id           String    @id @default(uuid())
+  hotelId      String    @map("hotel_id")
+  messageId    String?   @map("message_id")          // FK to messages table (nullable for campaigns)
+  messageType  String    @map("message_type")
+  metaCost     Int       @map("meta_cost")            // paise
+  markup       Int
+  sellingPrice Int       @map("selling_price")        // paise — charged to hotel
+  currency     String    @default("INR")
+  billingMonth String    @map("billing_month")        // YYYY-MM for fast grouping
+  invoiceId    String?   @map("invoice_id")
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  hotel        Hotel     @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  invoice      Invoice?  @relation(fields: [invoiceId], references: [id], onDelete: SetNull)
+
+  @@index([hotelId, billingMonth])
+  @@index([hotelId, createdAt])
+  @@index([invoiceId])
+  @@map("message_usage")
 }

@@ -544,7 +544,9 @@ export default function TemplatesPage() {
       await templates.remove(id);
       showToast('Template deleted');
       loadTemplates();
-    } catch { showToast('Failed to delete', 'error'); }
+    } catch (e) {
+      showToast(e.response?.data?.message || 'Failed to delete template', 'error');
+    }
   };
 
   const filtered = templateList.filter((t) => {

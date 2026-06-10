@@ -12,9 +12,9 @@ export declare class WebhookController {
         hotels: {
             id: string;
             name: string;
+            isActive: boolean;
             phoneNumberId: string;
             wabaId: string;
-            isActive: boolean;
         }[];
         timestamp: string;
     }>;

@@ -26,9 +26,8 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const res = await auth.login(form);
-      const { token, user } = res.data.data || res.data;
+      const { token } = res.data.data || res.data;
       localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
       navigate('/dashboard');
     } catch (err) {
       setError(

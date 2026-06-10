@@ -22,11 +22,11 @@ export declare class GuestsService {
             guestTags: ({
                 tag: {
                     id: string;
-                    hotelId: string;
                     name: string;
-                    deletedAt: Date | null;
                     createdAt: Date;
                     updatedAt: Date;
+                    deletedAt: Date | null;
+                    hotelId: string;
                     color: string;
                 };
             } & {
@@ -36,14 +36,16 @@ export declare class GuestsService {
             })[];
         } & {
             id: string;
-            hotelId: string;
+            email: string | null;
             name: string | null;
-            language: string;
-            deletedAt: Date | null;
             createdAt: Date;
             updatedAt: Date;
-            email: string | null;
+            deletedAt: Date | null;
+            hotelId: string;
+            notes: string | null;
             phone: string;
+            source: import(".prisma/client").$Enums.GuestSource;
+            language: string;
             countryCode: string | null;
             gender: import(".prisma/client").$Enums.Gender | null;
             stayStatus: import(".prisma/client").$Enums.StayStatus;
@@ -53,11 +55,9 @@ export declare class GuestsService {
             bookingRef: string | null;
             pmsGuestId: string | null;
             nationality: string | null;
-            notes: string | null;
             optIn: boolean;
             optInAt: Date | null;
             optOutAt: Date | null;
-            source: import(".prisma/client").$Enums.GuestSource;
             customFields: Prisma.JsonValue | null;
         })[];
         meta: {
@@ -71,11 +71,11 @@ export declare class GuestsService {
         guestTags: ({
             tag: {
                 id: string;
-                hotelId: string;
                 name: string;
-                deletedAt: Date | null;
                 createdAt: Date;
                 updatedAt: Date;
+                deletedAt: Date | null;
+                hotelId: string;
                 color: string;
             };
         } & {
@@ -85,14 +85,16 @@ export declare class GuestsService {
         })[];
     } & {
         id: string;
-        hotelId: string;
+        email: string | null;
         name: string | null;
-        language: string;
-        deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
-        email: string | null;
+        deletedAt: Date | null;
+        hotelId: string;
+        notes: string | null;
         phone: string;
+        source: import(".prisma/client").$Enums.GuestSource;
+        language: string;
         countryCode: string | null;
         gender: import(".prisma/client").$Enums.Gender | null;
         stayStatus: import(".prisma/client").$Enums.StayStatus;
@@ -102,23 +104,23 @@ export declare class GuestsService {
         bookingRef: string | null;
         pmsGuestId: string | null;
         nationality: string | null;
-        notes: string | null;
         optIn: boolean;
         optInAt: Date | null;
         optOutAt: Date | null;
-        source: import(".prisma/client").$Enums.GuestSource;
         customFields: Prisma.JsonValue | null;
     }>;
     create(hotelId: string, dto: CreateGuestDto): Promise<{
         id: string;
-        hotelId: string;
+        email: string | null;
         name: string | null;
-        language: string;
-        deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
-        email: string | null;
+        deletedAt: Date | null;
+        hotelId: string;
+        notes: string | null;
         phone: string;
+        source: import(".prisma/client").$Enums.GuestSource;
+        language: string;
         countryCode: string | null;
         gender: import(".prisma/client").$Enums.Gender | null;
         stayStatus: import(".prisma/client").$Enums.StayStatus;
@@ -128,23 +130,23 @@ export declare class GuestsService {
         bookingRef: string | null;
         pmsGuestId: string | null;
         nationality: string | null;
-        notes: string | null;
         optIn: boolean;
         optInAt: Date | null;
         optOutAt: Date | null;
-        source: import(".prisma/client").$Enums.GuestSource;
         customFields: Prisma.JsonValue | null;
     }>;
     update(hotelId: string, id: string, dto: UpdateGuestDto): Promise<{
         id: string;
-        hotelId: string;
+        email: string | null;
         name: string | null;
-        language: string;
-        deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
-        email: string | null;
+        deletedAt: Date | null;
+        hotelId: string;
+        notes: string | null;
         phone: string;
+        source: import(".prisma/client").$Enums.GuestSource;
+        language: string;
         countryCode: string | null;
         gender: import(".prisma/client").$Enums.Gender | null;
         stayStatus: import(".prisma/client").$Enums.StayStatus;
@@ -154,23 +156,23 @@ export declare class GuestsService {
         bookingRef: string | null;
         pmsGuestId: string | null;
         nationality: string | null;
-        notes: string | null;
         optIn: boolean;
         optInAt: Date | null;
         optOutAt: Date | null;
-        source: import(".prisma/client").$Enums.GuestSource;
         customFields: Prisma.JsonValue | null;
     }>;
     softDelete(hotelId: string, id: string): Promise<{
         id: string;
-        hotelId: string;
+        email: string | null;
         name: string | null;
-        language: string;
-        deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
-        email: string | null;
+        deletedAt: Date | null;
+        hotelId: string;
+        notes: string | null;
         phone: string;
+        source: import(".prisma/client").$Enums.GuestSource;
+        language: string;
         countryCode: string | null;
         gender: import(".prisma/client").$Enums.Gender | null;
         stayStatus: import(".prisma/client").$Enums.StayStatus;
@@ -180,23 +182,23 @@ export declare class GuestsService {
         bookingRef: string | null;
         pmsGuestId: string | null;
         nationality: string | null;
-        notes: string | null;
         optIn: boolean;
         optInAt: Date | null;
         optOutAt: Date | null;
-        source: import(".prisma/client").$Enums.GuestSource;
         customFields: Prisma.JsonValue | null;
     }>;
     forceDelete(hotelId: string, id: string): Promise<{
         id: string;
-        hotelId: string;
+        email: string | null;
         name: string | null;
-        language: string;
-        deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
-        email: string | null;
+        deletedAt: Date | null;
+        hotelId: string;
+        notes: string | null;
         phone: string;
+        source: import(".prisma/client").$Enums.GuestSource;
+        language: string;
         countryCode: string | null;
         gender: import(".prisma/client").$Enums.Gender | null;
         stayStatus: import(".prisma/client").$Enums.StayStatus;
@@ -206,11 +208,9 @@ export declare class GuestsService {
         bookingRef: string | null;
         pmsGuestId: string | null;
         nationality: string | null;
-        notes: string | null;
         optIn: boolean;
         optInAt: Date | null;
         optOutAt: Date | null;
-        source: import(".prisma/client").$Enums.GuestSource;
         customFields: Prisma.JsonValue | null;
     }>;
     importCsv(hotelId: string, buffer: Buffer): Promise<{
@@ -230,41 +230,43 @@ export declare class GuestsService {
     }>;
     getTags(hotelId: string): Promise<{
         id: string;
-        hotelId: string;
         name: string;
-        deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
+        deletedAt: Date | null;
+        hotelId: string;
         color: string;
     }[]>;
     createTag(hotelId: string, name: string, color: string): Promise<{
         id: string;
-        hotelId: string;
         name: string;
-        deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
+        deletedAt: Date | null;
+        hotelId: string;
         color: string;
     }>;
     deleteTag(hotelId: string, tagId: string): Promise<{
         id: string;
-        hotelId: string;
         name: string;
-        deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
+        deletedAt: Date | null;
+        hotelId: string;
         color: string;
     }>;
     optOut(hotelId: string, guestId: string): Promise<{
         id: string;
-        hotelId: string;
+        email: string | null;
         name: string | null;
-        language: string;
-        deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
-        email: string | null;
+        deletedAt: Date | null;
+        hotelId: string;
+        notes: string | null;
         phone: string;
+        source: import(".prisma/client").$Enums.GuestSource;
+        language: string;
         countryCode: string | null;
         gender: import(".prisma/client").$Enums.Gender | null;
         stayStatus: import(".prisma/client").$Enums.StayStatus;
@@ -274,11 +276,9 @@ export declare class GuestsService {
         bookingRef: string | null;
         pmsGuestId: string | null;
         nationality: string | null;
-        notes: string | null;
         optIn: boolean;
         optInAt: Date | null;
         optOutAt: Date | null;
-        source: import(".prisma/client").$Enums.GuestSource;
         customFields: Prisma.JsonValue | null;
     }>;
 }

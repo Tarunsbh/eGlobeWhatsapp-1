@@ -186,15 +186,10 @@ export class WhatsAppService {
   // ── Fetch Templates from Meta ─────────────────────────────
   async fetchTemplatesFromMeta(hotelId: string, wabaId: string): Promise<any[]> {
     const client = await this.buildClient(hotelId);
-    try {
-      const res = await client.get(`/${wabaId}/message_templates`, {
-        params: { limit: 100, fields: 'id,name,category,language,status,components,quality_score,rejected_reason' },
-      });
-      return res.data?.data || [];
-    } catch (e) {
-      this.logger.error(`fetchTemplates failed: ${e.message}`);
-      return [];
-    }
+    const res = await client.get(`/${wabaId}/message_templates`, {
+      params: { limit: 100, fields: 'id,name,category,language,status,components,quality_score,rejected_reason' },
+    });
+    return res.data?.data || [];
   }
 
   // ── Create Template via Meta API ──────────────────────────

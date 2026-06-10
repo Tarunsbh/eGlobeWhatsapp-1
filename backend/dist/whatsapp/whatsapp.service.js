@@ -166,16 +166,10 @@ let WhatsAppService = WhatsAppService_1 = class WhatsAppService {
     }
     async fetchTemplatesFromMeta(hotelId, wabaId) {
         const client = await this.buildClient(hotelId);
-        try {
-            const res = await client.get(`/${wabaId}/message_templates`, {
-                params: { limit: 100, fields: 'id,name,category,language,status,components,quality_score,rejected_reason' },
-            });
-            return res.data?.data || [];
-        }
-        catch (e) {
-            this.logger.error(`fetchTemplates failed: ${e.message}`);
-            return [];
-        }
+        const res = await client.get(`/${wabaId}/message_templates`, {
+            params: { limit: 100, fields: 'id,name,category,language,status,components,quality_score,rejected_reason' },
+        });
+        return res.data?.data || [];
     }
     async createTemplateOnMeta(hotelId, wabaId, payload) {
         const client = await this.buildClient(hotelId);
