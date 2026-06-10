@@ -10,7 +10,7 @@ const api = axios.create({
 const mapStayStatus = (value) => {
   const status = String(value || '').toUpperCase();
   if (status === 'CHECKED_IN') return 'IN_HOUSE';
-  if (status === 'ACTIVE' || status === 'INACTIVE') return 'NO_STAY'; //active
+  if (status === 'ACTIVE' || status === 'INACTIVE') return 'NO_STAY';
   return status || undefined;
 };
 

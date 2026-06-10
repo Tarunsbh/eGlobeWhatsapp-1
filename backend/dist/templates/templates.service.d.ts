@@ -5,6 +5,7 @@ import { UpdateTemplateDto } from './dto/update-template.dto';
 export declare class TemplatesService {
     private readonly prisma;
     private readonly whatsappService;
+    private readonly logger;
     constructor(prisma: PrismaService, whatsappService: WhatsAppService);
     findAll(hotelId: string, query: {
         status?: string;

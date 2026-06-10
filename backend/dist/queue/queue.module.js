@@ -13,6 +13,7 @@ const schedule_1 = require("@nestjs/schedule");
 const message_processor_1 = require("./message.processor");
 const campaign_processor_1 = require("./campaign.processor");
 const token_refresh_processor_1 = require("./token-refresh.processor");
+const automation_processor_1 = require("./automation.processor");
 let QueueModule = class QueueModule {
 };
 exports.QueueModule = QueueModule;
@@ -22,7 +23,7 @@ exports.QueueModule = QueueModule = __decorate([
             schedule_1.ScheduleModule.forRoot(),
             bull_1.BullModule.registerQueue({ name: 'messages' }, { name: 'campaigns' }, { name: 'automation' }, { name: 'token-refresh' }),
         ],
-        providers: [message_processor_1.MessageProcessor, campaign_processor_1.CampaignProcessor, token_refresh_processor_1.TokenRefreshProcessor],
+        providers: [message_processor_1.MessageProcessor, campaign_processor_1.CampaignProcessor, token_refresh_processor_1.TokenRefreshProcessor, automation_processor_1.AutomationProcessor],
         exports: [bull_1.BullModule],
     })
 ], QueueModule);

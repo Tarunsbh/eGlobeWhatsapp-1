@@ -114,14 +114,6 @@ export default function LoginPage() {
             <p className="text-sm text-gray-400 mt-1">Sign in to your dashboard</p>
           </div>
 
-          {/* Demo hint */}
-          <div className="mb-6 flex items-center gap-2.5 p-3.5 bg-[#25D366]/6 border border-[#25D366]/15 rounded-2xl">
-            <ShieldCheck size={14} className="text-[#25D366] flex-shrink-0" />
-            <p className="text-xs text-[#075E54] font-medium">
-              Demo: <span className="font-bold">admin@demo.com</span> / <span className="font-bold">Admin@123</span>
-            </p>
-          </div>
-
           {/* Error */}
           {error && (
             <div className="mb-5 flex items-start gap-2.5 p-3.5 bg-red-50 border border-red-100 rounded-2xl text-red-600 text-sm">
@@ -143,7 +135,7 @@ export default function LoginPage() {
                   autoComplete="email"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  placeholder="admin@demo.com"
+                  placeholder="your@email.com"
                   className={inputCls}
                 />
               </div>

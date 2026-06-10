@@ -58,6 +58,9 @@ let CampaignsController = class CampaignsController {
     getStats(req, id) {
         return this.campaignsService.getStats(req.user.hotelId, id);
     }
+    getAnalytics(req) {
+        return this.campaignsService.getAnalytics(req.user.hotelId);
+    }
 };
 exports.CampaignsController = CampaignsController;
 __decorate([
@@ -161,6 +164,14 @@ __decorate([
     __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", void 0)
 ], CampaignsController.prototype, "getStats", null);
+__decorate([
+    (0, common_1.Get)('analytics/summary'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get aggregate campaign analytics for dashboard' }),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], CampaignsController.prototype, "getAnalytics", null);
 exports.CampaignsController = CampaignsController = __decorate([
     (0, swagger_1.ApiTags)('campaigns'),
     (0, swagger_1.ApiBearerAuth)(),

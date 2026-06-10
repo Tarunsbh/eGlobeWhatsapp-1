@@ -8,15 +8,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var TemplatesService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TemplatesService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const whatsapp_service_1 = require("../whatsapp/whatsapp.service");
-let TemplatesService = class TemplatesService {
+let TemplatesService = TemplatesService_1 = class TemplatesService {
     constructor(prisma, whatsappService) {
         this.prisma = prisma;
         this.whatsappService = whatsappService;
+        this.logger = new common_1.Logger(TemplatesService_1.name);
     }
     async findAll(hotelId, query) {
         const { status, category } = query;
@@ -136,7 +138,18 @@ let TemplatesService = class TemplatesService {
         });
     }
     async softDelete(hotelId, id) {
-        await this.findOne(hotelId, id);
+        const template = await this.findOne(hotelId, id);
+        if (template.metaTemplateId) {
+            try {
+                const hotel = await this.prisma.hotel.findUnique({ where: { id: hotelId } });
+                if (hotel?.wabaId && hotel.wabaId !== 'CONFIGURE_IN_SETTINGS') {
+                    await this.whatsappService.deleteTemplateOnMeta(hotelId, hotel.wabaId, template.name);
+                }
+            }
+            catch (e) {
+                this.logger.warn(`Meta template deletion failed for ${template.name}: ${e?.message}`);
+            }
+        }
         return this.prisma.template.update({
             where: { id },
             data: { deletedAt: new Date() },
@@ -163,7 +176,7 @@ let TemplatesService = class TemplatesService {
                 const existing = await this.prisma.template.findFirst({
                     where: { hotelId, metaTemplateId: mt.id },
                 });
-                const data = {
+                const syncData = {
                     name: mt.name,
                     category: mt.category,
                     language: mt.language,
@@ -174,14 +187,13 @@ let TemplatesService = class TemplatesService {
                     footerText: this.extractFooterText(mt.components),
                     rejectionReason: mt.rejected_reason,
                     syncedAt: new Date(),
-                    deletedAt: null,
                 };
                 if (existing) {
-                    await this.prisma.template.update({ where: { id: existing.id }, data });
+                    await this.prisma.template.update({ where: { id: existing.id }, data: syncData });
                 }
                 else {
                     await this.prisma.template.create({
-                        data: { ...data, hotelId, metaTemplateId: mt.id },
+                        data: { ...syncData, hotelId, metaTemplateId: mt.id, deletedAt: null },
                     });
                 }
                 synced++;
@@ -324,7 +336,7 @@ let TemplatesService = class TemplatesService {
     }
 };
 exports.TemplatesService = TemplatesService;
-exports.TemplatesService = TemplatesService = __decorate([
+exports.TemplatesService = TemplatesService = TemplatesService_1 = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService,
         whatsapp_service_1.WhatsAppService])

@@ -8,25 +8,41 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var GuestsService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GuestsService = void 0;
 const common_1 = require("@nestjs/common");
+const client_1 = require("@prisma/client");
 const prisma_service_1 = require("../prisma/prisma.service");
 const csv = require("csv-parse/sync");
-let GuestsService = class GuestsService {
+let GuestsService = GuestsService_1 = class GuestsService {
     constructor(prisma) {
         this.prisma = prisma;
+        this.logger = new common_1.Logger(GuestsService_1.name);
     }
     validateE164(phone) {
         return /^\+[1-9]\d{1,14}$/.test(phone);
     }
+    parseDate(value) {
+        if (!value)
+            return undefined;
+        const d = new Date(value);
+        return isNaN(d.getTime()) ? undefined : d;
+    }
     toGuestData(dto) {
-        const { status, externalId, ...rest } = dto;
-        return {
+        const { status, externalId, checkInDate, checkOutDate, ...rest } = dto;
+        const data = {
             ...rest,
-            stayStatus: this.normalizeStayStatus(status),
-            pmsGuestId: externalId,
+            stayStatus: this.normalizeStayStatus(status) ?? undefined,
+            pmsGuestId: externalId ?? undefined,
         };
+        const ciDate = this.parseDate(checkInDate);
+        const coDate = this.parseDate(checkOutDate);
+        if (ciDate !== undefined)
+            data.checkInDate = ciDate;
+        if (coDate !== undefined)
+            data.checkOutDate = coDate;
+        return Object.fromEntries(Object.entries(data).filter(([, v]) => v !== undefined));
     }
     normalizeStayStatus(status) {
         if (!status)
@@ -39,6 +55,25 @@ let GuestsService = class GuestsService {
         if (normalized === 'INACTIVE')
             return 'NO_STAY';
         return normalized;
+    }
+    handlePrismaError(e, phone) {
+        if (e instanceof client_1.Prisma.PrismaClientKnownRequestError) {
+            if (e.code === 'P2002') {
+                throw new common_1.ConflictException(phone
+                    ? `A guest with phone ${phone} already exists`
+                    : 'A guest with this phone number already exists');
+            }
+            if (e.code === 'P2025') {
+                throw new common_1.NotFoundException('Guest not found');
+            }
+            this.logger.error(`Prisma error ${e.code}: ${e.message}`);
+            throw new common_1.BadRequestException(`Database error: ${e.code}`);
+        }
+        if (e instanceof client_1.Prisma.PrismaClientValidationError) {
+            this.logger.error(`Prisma validation error: ${e.message}`);
+            throw new common_1.BadRequestException('Invalid guest data — please check all fields and try again');
+        }
+        throw e;
     }
     async findAll(hotelId, query) {
         const { search, status, tag } = query;
@@ -114,17 +149,29 @@ let GuestsService = class GuestsService {
             throw new common_1.BadRequestException('Phone must be in E.164 format (e.g. +14155552671)');
         }
         const existing = await this.prisma.guest.findFirst({
-            where: { hotelId, phone: dto.phone, deletedAt: null },
+            where: { hotelId, phone: dto.phone },
         });
         if (existing) {
-            throw new common_1.ConflictException(`Guest with phone ${dto.phone} already exists`);
+            if (!existing.deletedAt) {
+                throw new common_1.ConflictException(`A guest with phone ${dto.phone} already exists`);
+            }
+            const { hotelId: _hid, ...restoreData } = this.toGuestData(dto);
+            return this.prisma.guest.update({
+                where: { id: existing.id },
+                data: { ...restoreData, deletedAt: null },
+            });
         }
-        return this.prisma.guest.create({
-            data: {
-                ...this.toGuestData(dto),
-                hotelId,
-            },
-        });
+        try {
+            return await this.prisma.guest.create({
+                data: {
+                    ...this.toGuestData(dto),
+                    hotelId,
+                },
+            });
+        }
+        catch (e) {
+            this.handlePrismaError(e, dto.phone);
+        }
     }
     async update(hotelId, id, dto) {
         await this.findOne(hotelId, id);
@@ -139,10 +186,15 @@ let GuestsService = class GuestsService {
                 throw new common_1.ConflictException(`Another guest with phone ${dto.phone} already exists`);
             }
         }
-        return this.prisma.guest.update({
-            where: { id },
-            data: this.toGuestData(dto),
-        });
+        try {
+            return await this.prisma.guest.update({
+                where: { id },
+                data: this.toGuestData(dto),
+            });
+        }
+        catch (e) {
+            this.handlePrismaError(e, dto.phone);
+        }
     }
     async softDelete(hotelId, id) {
         await this.findOne(hotelId, id);
@@ -291,7 +343,7 @@ let GuestsService = class GuestsService {
     }
 };
 exports.GuestsService = GuestsService;
-exports.GuestsService = GuestsService = __decorate([
+exports.GuestsService = GuestsService = GuestsService_1 = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService])
 ], GuestsService);

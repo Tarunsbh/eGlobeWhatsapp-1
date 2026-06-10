@@ -10,11 +10,11 @@ export declare class WebhookController {
         configured_verify_token: any;
         env_phone_number_id: any;
         hotels: {
-            name: string;
             id: string;
-            isActive: boolean;
+            name: string;
             phoneNumberId: string;
             wabaId: string;
+            isActive: boolean;
         }[];
         timestamp: string;
     }>;

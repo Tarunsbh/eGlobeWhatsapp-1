@@ -6,6 +6,8 @@ export declare class HotelsController {
     getMe(req: any): Promise<{
         id: string;
         name: string;
+        createdAt: Date;
+        updatedAt: Date;
         phoneNumberId: string;
         wabaId: string;
         timezone: string;
@@ -13,12 +15,11 @@ export declare class HotelsController {
         plan: import(".prisma/client").$Enums.Plan;
         isActive: boolean;
         settings: import("@prisma/client/runtime/library").JsonValue;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     update(req: any, dto: UpdateHotelDto): Promise<{
         id: string;
         name: string;
+        updatedAt: Date;
         phoneNumberId: string;
         wabaId: string;
         timezone: string;
@@ -26,7 +27,6 @@ export declare class HotelsController {
         plan: import(".prisma/client").$Enums.Plan;
         isActive: boolean;
         settings: import("@prisma/client/runtime/library").JsonValue;
-        updatedAt: Date;
     }>;
     storeToken(req: any, accessToken: string, wabaId?: string, phoneNumberId?: string, expiresIn?: number): Promise<{
         id: string;

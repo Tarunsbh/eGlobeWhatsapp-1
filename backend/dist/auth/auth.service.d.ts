@@ -11,13 +11,11 @@ export declare class AuthService {
         access_token: string;
         user: {
             hotel: {
-                name: string;
                 id: string;
+                name: string;
                 deletedAt: Date | null;
                 createdAt: Date;
                 updatedAt: Date;
-                isActive: boolean;
-                settings: import("@prisma/client/runtime/library").JsonValue | null;
                 slug: string;
                 phoneNumberId: string;
                 wabaId: string;
@@ -26,42 +24,42 @@ export declare class AuthService {
                 timezone: string;
                 country: string;
                 plan: import(".prisma/client").$Enums.Plan;
+                isActive: boolean;
+                settings: import("@prisma/client/runtime/library").JsonValue | null;
             };
-            name: string;
             id: string;
             hotelId: string;
+            name: string;
             deletedAt: Date | null;
             createdAt: Date;
             updatedAt: Date;
-            email: string;
-            role: import(".prisma/client").$Enums.Role;
-            avatarUrl: string | null;
             isActive: boolean;
+            role: import(".prisma/client").$Enums.Role;
+            email: string;
+            avatarUrl: string | null;
             lastLoginAt: Date | null;
         };
     }>;
     register(dto: RegisterDto, actorHotelId: string, actorRole: string): Promise<{
-        name: string;
         id: string;
         hotelId: string;
+        name: string;
         deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
-        email: string;
-        role: import(".prisma/client").$Enums.Role;
-        avatarUrl: string | null;
         isActive: boolean;
+        role: import(".prisma/client").$Enums.Role;
+        email: string;
+        avatarUrl: string | null;
         lastLoginAt: Date | null;
     }>;
     me(userId: string): Promise<{
         hotel: {
-            name: string;
             id: string;
+            name: string;
             deletedAt: Date | null;
             createdAt: Date;
             updatedAt: Date;
-            isActive: boolean;
-            settings: import("@prisma/client/runtime/library").JsonValue | null;
             slug: string;
             phoneNumberId: string;
             wabaId: string;
@@ -70,29 +68,31 @@ export declare class AuthService {
             timezone: string;
             country: string;
             plan: import(".prisma/client").$Enums.Plan;
+            isActive: boolean;
+            settings: import("@prisma/client/runtime/library").JsonValue | null;
         };
-        name: string;
         id: string;
         hotelId: string;
+        name: string;
         deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
-        email: string;
-        role: import(".prisma/client").$Enums.Role;
-        avatarUrl: string | null;
         isActive: boolean;
+        role: import(".prisma/client").$Enums.Role;
+        email: string;
+        avatarUrl: string | null;
         lastLoginAt: Date | null;
     }>;
     changePassword(userId: string, oldPw: string, newPw: string): Promise<{
         message: string;
     }>;
     listAgents(hotelId: string): Promise<{
-        name: string;
         id: string;
+        name: string;
         createdAt: Date;
-        email: string;
-        role: import(".prisma/client").$Enums.Role;
         isActive: boolean;
+        role: import(".prisma/client").$Enums.Role;
+        email: string;
         lastLoginAt: Date;
     }[]>;
 }

@@ -85,6 +85,8 @@ let CampaignsService = CampaignsService_1 = class CampaignsService {
         if (!template) {
             throw new common_1.NotFoundException(`Template ${dto.templateId} not found`);
         }
+        const scheduledAt = dto.scheduledAt ? new Date(dto.scheduledAt) : null;
+        const status = scheduledAt && scheduledAt > new Date() ? 'SCHEDULED' : 'DRAFT';
         const campaign = await this.prisma.campaign.create({
             data: {
                 hotelId,
@@ -93,9 +95,9 @@ let CampaignsService = CampaignsService_1 = class CampaignsService {
                 templateId: dto.templateId,
                 audienceType: this.normalizeAudienceType(dto.audienceType),
                 audienceFilter: dto.audienceFilter,
-                scheduledAt: dto.scheduledAt ? new Date(dto.scheduledAt) : null,
+                scheduledAt,
                 variableValues: dto.variableValues,
-                status: 'DRAFT',
+                status: status,
             },
         });
         const guests = await this.buildAudience(hotelId, dto.audienceType, dto.audienceFilter);
@@ -183,11 +185,15 @@ let CampaignsService = CampaignsService_1 = class CampaignsService {
         if (!['DRAFT', 'SCHEDULED'].includes(campaign.status)) {
             throw new common_1.BadRequestException('Only DRAFT or SCHEDULED campaigns can be launched');
         }
+        if (!campaign.template || campaign.template.status !== 'APPROVED') {
+            throw new common_1.BadRequestException('Campaign template must be APPROVED by Meta before launching. ' +
+                `Current status: ${campaign.template?.status || 'UNKNOWN'}`);
+        }
         const recipientCount = await this.prisma.campaignRecipient.count({
             where: { campaignId: id },
         });
         if (recipientCount === 0) {
-            throw new common_1.BadRequestException('Campaign has no recipients');
+            throw new common_1.BadRequestException('Campaign has no recipients. The selected audience may be empty.');
         }
         await this.prisma.campaign.update({
             where: { id },
@@ -352,6 +358,46 @@ let CampaignsService = CampaignsService_1 = class CampaignsService {
             where: { id },
             data: { deletedAt: new Date() },
         });
+    }
+    async getAnalytics(hotelId) {
+        const [statusCounts, totals] = await Promise.all([
+            this.prisma.campaign.groupBy({
+                by: ['status'],
+                where: { hotelId, deletedAt: null },
+                _count: { status: true },
+            }),
+            this.prisma.campaign.aggregate({
+                where: { hotelId, deletedAt: null },
+                _sum: {
+                    totalRecipients: true,
+                    sentCount: true,
+                    deliveredCount: true,
+                    readCount: true,
+                    failedCount: true,
+                },
+            }),
+        ]);
+        const byStatus = {};
+        for (const row of statusCounts) {
+            byStatus[row.status.toLowerCase()] = row._count.status;
+        }
+        const sent = totals._sum.sentCount || 0;
+        const delivered = totals._sum.deliveredCount || 0;
+        const read = totals._sum.readCount || 0;
+        const failed = totals._sum.failedCount || 0;
+        return {
+            byStatus,
+            totals: {
+                campaigns: statusCounts.reduce((s, r) => s + r._count.status, 0),
+                recipients: totals._sum.totalRecipients || 0,
+                sent,
+                delivered,
+                read,
+                failed,
+                deliveryRate: sent > 0 ? Math.round(((delivered + read) / sent) * 100) : 0,
+                readRate: delivered > 0 ? Math.round((read / delivered) * 100) : 0,
+            },
+        };
     }
 };
 exports.CampaignsService = CampaignsService;

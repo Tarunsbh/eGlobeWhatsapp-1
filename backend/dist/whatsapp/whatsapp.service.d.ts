@@ -28,6 +28,10 @@ export declare class WhatsAppService {
     deleteTemplateOnMeta(hotelId: string, wabaId: string, name: string): Promise<void>;
     storeToken(hotelId: string, token: string, expiresAt?: Date): Promise<{
         id: string;
+        hotelId: string;
+        createdAt: Date;
+        updatedAt: Date;
+        isActive: boolean;
         tokenType: import(".prisma/client").$Enums.TokenType;
         tokenValue: string;
         tokenHash: string;
@@ -35,13 +39,9 @@ export declare class WhatsAppService {
         scopes: import("@prisma/client/runtime/library").JsonValue | null;
         expiresAt: Date | null;
         refreshAt: Date | null;
-        isActive: boolean;
         refreshCount: number;
         lastRefreshed: Date | null;
         lastUsedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
-        hotelId: string;
     }>;
     validateToken(token: string): Promise<void>;
     refreshToken(token: string): Promise<any>;

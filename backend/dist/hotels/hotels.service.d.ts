@@ -9,6 +9,8 @@ export declare class HotelsService {
     findOne(hotelId: string): Promise<{
         id: string;
         name: string;
+        createdAt: Date;
+        updatedAt: Date;
         phoneNumberId: string;
         wabaId: string;
         timezone: string;
@@ -16,12 +18,11 @@ export declare class HotelsService {
         plan: import(".prisma/client").$Enums.Plan;
         isActive: boolean;
         settings: import("@prisma/client/runtime/library").JsonValue;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     update(hotelId: string, dto: UpdateHotelDto): Promise<{
         id: string;
         name: string;
+        updatedAt: Date;
         phoneNumberId: string;
         wabaId: string;
         timezone: string;
@@ -29,7 +30,6 @@ export declare class HotelsService {
         plan: import(".prisma/client").$Enums.Plan;
         isActive: boolean;
         settings: import("@prisma/client/runtime/library").JsonValue;
-        updatedAt: Date;
     }>;
     storeToken(hotelId: string, tokenData: {
         accessToken: string;

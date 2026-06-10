@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  Logger,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { WhatsAppService } from '../whatsapp/whatsapp.service';
@@ -10,6 +11,8 @@ import { UpdateTemplateDto } from './dto/update-template.dto';
 
 @Injectable()
 export class TemplatesService {
+  private readonly logger = new Logger(TemplatesService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly whatsappService: WhatsAppService,
@@ -157,7 +160,20 @@ export class TemplatesService {
   }
 
   async softDelete(hotelId: string, id: string) {
-    await this.findOne(hotelId, id);
+    const template = await this.findOne(hotelId, id);
+
+    // Best-effort Meta deletion — don't block local delete if Meta call fails
+    if (template.metaTemplateId) {
+      try {
+        const hotel = await this.prisma.hotel.findUnique({ where: { id: hotelId } });
+        if (hotel?.wabaId && hotel.wabaId !== 'CONFIGURE_IN_SETTINGS') {
+          await this.whatsappService.deleteTemplateOnMeta(hotelId, hotel.wabaId, template.name);
+        }
+      } catch (e) {
+        this.logger.warn(`Meta template deletion failed for ${template.name}: ${e?.message}`);
+      }
+    }
+
     return this.prisma.template.update({
       where: { id },
       data:  { deletedAt: new Date() },
@@ -196,7 +212,7 @@ export class TemplatesService {
           where: { hotelId, metaTemplateId: mt.id },
         });
 
-        const data: any = {
+        const syncData: any = {
           name:            mt.name,
           category:        mt.category,
           language:        mt.language,
@@ -207,14 +223,14 @@ export class TemplatesService {
           footerText:      this.extractFooterText(mt.components),
           rejectionReason: mt.rejected_reason,
           syncedAt:        new Date(),
-          deletedAt:       null,
         };
 
         if (existing) {
-          await this.prisma.template.update({ where: { id: existing.id }, data });
+          // Don't reset deletedAt — preserve any local soft-delete the user made
+          await this.prisma.template.update({ where: { id: existing.id }, data: syncData });
         } else {
           await this.prisma.template.create({
-            data: { ...data, hotelId, metaTemplateId: mt.id },
+            data: { ...syncData, hotelId, metaTemplateId: mt.id, deletedAt: null },
           });
         }
         synced++;

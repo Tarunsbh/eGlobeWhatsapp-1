@@ -7,7 +7,7 @@ const prisma = new client_1.PrismaClient();
 async function main() {
     console.log('🌱 Running startup seed/sync...');
     const envPhoneId = process.env.WA_PHONE_NUMBER_ID || '';
-    const envWabaId = process.env.WA_WABA_ID || '';
+    const envWabaId = process.env.WA_WABA_ID || process.env.WA_BUSINESS_ACCOUNT_ID || '';
     const verifyToken = process.env.WEBHOOK_VERIFY_TOKEN || 'apple';
     let hotel = await prisma.hotel.findFirst({ where: { deletedAt: null } });
     if (!hotel) {

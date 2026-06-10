@@ -45,6 +45,9 @@ let AutomationController = class AutomationController {
         await this.automationService.findOne(req.user.hotelId, id);
         return this.automationService.runRule(id);
     }
+    getLogs(req, id) {
+        return this.automationService.getLogs(req.user.hotelId, id);
+    }
 };
 exports.AutomationController = AutomationController;
 __decorate([
@@ -116,6 +119,16 @@ __decorate([
     __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", Promise)
 ], AutomationController.prototype, "runNow", null);
+__decorate([
+    (0, common_1.Get)(':id/logs'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get execution logs for an automation rule' }),
+    (0, swagger_1.ApiParam)({ name: 'id', type: 'string' }),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", void 0)
+], AutomationController.prototype, "getLogs", null);
 exports.AutomationController = AutomationController = __decorate([
     (0, swagger_1.ApiTags)('automation'),
     (0, swagger_1.ApiBearerAuth)(),

@@ -24,10 +24,10 @@ export declare class LogsService {
         limit?: number;
     }): Promise<{
         data: {
-            type: import(".prisma/client").$Enums.LogType;
             id: bigint;
             hotelId: string | null;
             createdAt: Date;
+            type: import(".prisma/client").$Enums.LogType;
             message: string;
             ip: string | null;
             level: import(".prisma/client").$Enums.LogLevel;
@@ -45,10 +45,10 @@ export declare class LogsService {
         };
     }>;
     createLog(hotelId: string, type: string, level: string, message: string, context?: Record<string, any>): Promise<{
-        type: import(".prisma/client").$Enums.LogType;
         id: bigint;
         hotelId: string | null;
         createdAt: Date;
+        type: import(".prisma/client").$Enums.LogType;
         message: string;
         ip: string | null;
         level: import(".prisma/client").$Enums.LogLevel;

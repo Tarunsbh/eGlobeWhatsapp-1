@@ -51,11 +51,14 @@ export declare class GuestsController {
         } & {
             id: string;
             hotelId: string;
-            phone: string;
             name: string | null;
-            email: string | null;
-            countryCode: string | null;
             language: string;
+            deletedAt: Date | null;
+            createdAt: Date;
+            updatedAt: Date;
+            email: string | null;
+            phone: string;
+            countryCode: string | null;
             gender: import(".prisma/client").$Enums.Gender | null;
             stayStatus: import(".prisma/client").$Enums.StayStatus;
             checkInDate: Date | null;
@@ -70,9 +73,6 @@ export declare class GuestsController {
             optOutAt: Date | null;
             source: import(".prisma/client").$Enums.GuestSource;
             customFields: import("@prisma/client/runtime/library").JsonValue | null;
-            deletedAt: Date | null;
-            createdAt: Date;
-            updatedAt: Date;
         })[];
         meta: {
             total: number;
@@ -100,11 +100,14 @@ export declare class GuestsController {
     } & {
         id: string;
         hotelId: string;
-        phone: string;
         name: string | null;
-        email: string | null;
-        countryCode: string | null;
         language: string;
+        deletedAt: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
+        email: string | null;
+        phone: string;
+        countryCode: string | null;
         gender: import(".prisma/client").$Enums.Gender | null;
         stayStatus: import(".prisma/client").$Enums.StayStatus;
         checkInDate: Date | null;
@@ -119,18 +122,18 @@ export declare class GuestsController {
         optOutAt: Date | null;
         source: import(".prisma/client").$Enums.GuestSource;
         customFields: import("@prisma/client/runtime/library").JsonValue | null;
-        deletedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     create(req: any, dto: CreateGuestDto): Promise<{
         id: string;
         hotelId: string;
-        phone: string;
         name: string | null;
-        email: string | null;
-        countryCode: string | null;
         language: string;
+        deletedAt: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
+        email: string | null;
+        phone: string;
+        countryCode: string | null;
         gender: import(".prisma/client").$Enums.Gender | null;
         stayStatus: import(".prisma/client").$Enums.StayStatus;
         checkInDate: Date | null;
@@ -145,18 +148,18 @@ export declare class GuestsController {
         optOutAt: Date | null;
         source: import(".prisma/client").$Enums.GuestSource;
         customFields: import("@prisma/client/runtime/library").JsonValue | null;
-        deletedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     update(req: any, id: string, dto: UpdateGuestDto): Promise<{
         id: string;
         hotelId: string;
-        phone: string;
         name: string | null;
-        email: string | null;
-        countryCode: string | null;
         language: string;
+        deletedAt: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
+        email: string | null;
+        phone: string;
+        countryCode: string | null;
         gender: import(".prisma/client").$Enums.Gender | null;
         stayStatus: import(".prisma/client").$Enums.StayStatus;
         checkInDate: Date | null;
@@ -171,18 +174,18 @@ export declare class GuestsController {
         optOutAt: Date | null;
         source: import(".prisma/client").$Enums.GuestSource;
         customFields: import("@prisma/client/runtime/library").JsonValue | null;
-        deletedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     softDelete(req: any, id: string): Promise<{
         id: string;
         hotelId: string;
-        phone: string;
         name: string | null;
-        email: string | null;
-        countryCode: string | null;
         language: string;
+        deletedAt: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
+        email: string | null;
+        phone: string;
+        countryCode: string | null;
         gender: import(".prisma/client").$Enums.Gender | null;
         stayStatus: import(".prisma/client").$Enums.StayStatus;
         checkInDate: Date | null;
@@ -197,18 +200,18 @@ export declare class GuestsController {
         optOutAt: Date | null;
         source: import(".prisma/client").$Enums.GuestSource;
         customFields: import("@prisma/client/runtime/library").JsonValue | null;
-        deletedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     forceDelete(req: any, id: string): Promise<{
         id: string;
         hotelId: string;
-        phone: string;
         name: string | null;
-        email: string | null;
-        countryCode: string | null;
         language: string;
+        deletedAt: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
+        email: string | null;
+        phone: string;
+        countryCode: string | null;
         gender: import(".prisma/client").$Enums.Gender | null;
         stayStatus: import(".prisma/client").$Enums.StayStatus;
         checkInDate: Date | null;
@@ -223,9 +226,6 @@ export declare class GuestsController {
         optOutAt: Date | null;
         source: import(".prisma/client").$Enums.GuestSource;
         customFields: import("@prisma/client/runtime/library").JsonValue | null;
-        deletedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     importCsv(req: any, file: Express.Multer.File): Promise<{
         imported: number;
@@ -235,11 +235,14 @@ export declare class GuestsController {
     optOut(req: any, id: string): Promise<{
         id: string;
         hotelId: string;
-        phone: string;
         name: string | null;
-        email: string | null;
-        countryCode: string | null;
         language: string;
+        deletedAt: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
+        email: string | null;
+        phone: string;
+        countryCode: string | null;
         gender: import(".prisma/client").$Enums.Gender | null;
         stayStatus: import(".prisma/client").$Enums.StayStatus;
         checkInDate: Date | null;
@@ -254,9 +257,6 @@ export declare class GuestsController {
         optOutAt: Date | null;
         source: import(".prisma/client").$Enums.GuestSource;
         customFields: import("@prisma/client/runtime/library").JsonValue | null;
-        deletedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     addTag(req: any, id: string, tagId: string): Promise<{
         createdAt: Date;

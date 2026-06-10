@@ -28,8 +28,8 @@ export declare class AnalyticsController {
         id: string;
         name: string;
         template: {
-            name: string;
             id: string;
+            name: string;
         };
         status: import(".prisma/client").$Enums.CampaignStatus;
         total: number;
@@ -45,8 +45,8 @@ export declare class AnalyticsController {
         id: string;
         name: string;
         template: {
-            name: string;
             id: string;
+            name: string;
         };
         status: import(".prisma/client").$Enums.CampaignStatus;
         total: number;
